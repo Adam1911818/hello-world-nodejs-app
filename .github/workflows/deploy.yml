@@ -1,30 +1,45 @@
-name: Deploy to ECS
+name: Build and Deploy to ECS
 
 on:
   push:
     branches:
       - main
+  pull_request:
+    branches:
+      - main
 
 jobs:
-  build:
+  build-and-deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v2
-        with:
-          node-version: '20'
-      - run: npm install
-      - run: docker build -t ${{ secrets.Myapp }}.dkr.ecr.ap-south-1.amazonaws.com/${{ secrets.Appname }}.dkr.ecr.ap-south-1.amazonaws.com/hello-world-nodejs:$GITHUB_SHA .
-      - id: ecr-login
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Login to AWS ECR
+        id: login-ecr
         uses: aws-actions/amazon-ecr-login@v1
-      - run: |
-          docker tag ${{ secrets.Myapp }}.dkr.ecr.ap-south-1.amazonaws.com/${{ secrets.Appname }}.dkr.ecr.ap-south-1.amazonaws.com/hello-world-nodejs:$GITHUB_SHA
-          docker push ${{ secrets.Myapp }}.dkr.ecr.ap-south-1.amazonaws.com/${{ secrets.Appname }}.dkr.ecr.ap-south-1.amazonaws.com/hello-world-nodejs:$GITHUB_SHA
-      - env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AKIAZI2LGJTPTW73QE53 }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.Myapp }}
-        run: |
-          cd terraform
-          terraform init
-          terraform apply -auto-approve -var "docker_image=${{ secrets.Myapp }}.dkr.ecr.ap-south-1.amazonaws.com/${{ secrets.Appname }}.dkr.ecr.ap-south-1.amazonaws.com/hello-world-nodejs:latest:$GITHUB_SHA"
+        with:
+          region: ${{ secrets.ap-south-1 }}
+
+      - name: Build and Push Docker Image
+        id: build-image
+        uses: docker/build-push-action@v3
+        with:
+          context: .
+          file: /Dockerfile 
+          push: true
+          tags: ${{ steps.login-ecr.outputs.registry }}/hello-world-nodejs:latest
+
+      - name: Deploy to ECS
+        id: deploy-ecs
+        uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+        with:
+          task-definition: ecs-task-definition.json
+          service: hello-world-app
+          cluster: hello-world-cluster
+          region: ${{ secrets.ap-south-1 }}
+          wait-for-service-stability: true
