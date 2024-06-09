@@ -22,7 +22,7 @@ jobs:
         run: npm install
 
       - name: Build Docker image
-        run: docker build -t ${{ secrets."Myapp" }}.dkr.ecr.${{ secrets.ap-south-1 }}.amazonaws.com/${{ secrets.arn:aws:secretsmanager:ap-south-1:637423471839:secret:Myapp-MoOPIy }}:$GITHUB_SHA .
+        run: docker build -t ${{ secrets.Myapp }}.dkr.ecr.${{ secrets.ap-south-1 }}.amazonaws.com/${{ secrets.arn:aws:secretsmanager:ap-south-1:637423471839:secret:Myapp-MoOPIy }}:$GITHUB_SHA .
 
       - name: Log in to Amazon ECR
         id: ecr-login
