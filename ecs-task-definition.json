@@ -1,13 +1,14 @@
 {
-  "family": "nodejs",
+  "family": "hello-world-task",
+  "networkMode": "awsvpc",
   "containerDefinitions": [
     {
-      "name": "hello-world-nodejs",
+      "name": "hello-world-container",
       "image": "637423471839.dkr.ecr.ap-south-1.amazonaws.com/hello-world-nodejs:latest",
-      "cpu": 256,
       "memory": 512,
+      "cpu": 256,
       "essential": true,
-      "portMappings": 
+      "portMappings": [
         {
           "containerPort": 80,
           "hostPort": 80
@@ -15,10 +16,9 @@
       ]
     }
   ],
-  "requiresCompatibilities": ["FARGATE"],
-  "networkMode": "awsvpc",
+  "requiresCompatibilities": [
+    "FARGATE"
+  ],
   "cpu": "256",
-  "memory": "512",
-  "executionRoleArn": "arn:aws:iam::637423471839:role/ecsexecutionrole",
-  "taskRoleArn": "arn:aws:iam::637423471839:role/taskrole"
+  "memory": "512"
 }
