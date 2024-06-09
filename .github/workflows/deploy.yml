@@ -23,9 +23,9 @@ jobs:
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v1
         with:
-          region: ap-south-1 
-          access-key-id: AKIAZI2LGJTPTW73QE53
-          secret-access-key: 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
+          region: "ap-south-1" 
+          access-key-id: "AKIAZI2LGJTPTW73QE53"
+          secret-access-key: "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"
       - name: Build and Push Docker Image
         id: build-image
         uses: docker/build-push-action@v3
