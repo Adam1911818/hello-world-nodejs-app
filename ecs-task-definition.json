@@ -19,6 +19,6 @@
   "networkMode": "awsvpc",
   "cpu": "256",
   "memory": "512",
-  "executionRoleArn": "arn:aws:iam::aws:policy/service-role/AmazonEC2ContainerServiceRole",
+  "executionRoleArn": "arn:aws:iam::637423471839:role/ecsTaskExecutionRole",
   "taskRoleArn": "arn:aws:iam::637423471839:role/ecs_task_execution_role_new"
 }
