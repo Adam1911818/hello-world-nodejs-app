@@ -1,0 +1,24 @@
+{
+  "family": "nodejs",
+  "containerDefinitions": [
+    {
+      "name": "hello-world-nodejs",
+      "image": "637423471839.dkr.ecr.ap-south-1.amazonaws.com/hello-world-nodejs:latest",
+      "cpu": 256,
+      "memory": 512,
+      "essential": true,
+      "portMappings": [
+        {
+          "containerPort": 80,
+          "hostPort": 80
+        }
+      ]
+    }
+  ],
+  "requiresCompatibilities": ["FARGATE"],
+  "networkMode": "awsvpc",
+  "cpu": "256",
+  "memory": "512",
+  "executionRoleArn": "arn:aws:iam::aws:policy/service-role/AmazonEC2ContainerServiceRole",
+  "taskRoleArn": "arn:aws:iam::637423471839:role/ecs_task_execution_role_new"
+}
