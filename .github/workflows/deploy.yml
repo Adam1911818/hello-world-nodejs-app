@@ -1,4 +1,5 @@
 name: Build and Deploy to ECS
+
 on:
   push:
     branches:
@@ -6,6 +7,7 @@ on:
   pull_request:
     branches:
       - main
+
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
@@ -27,25 +29,25 @@ jobs:
       - name: Login to AWS ECR
         uses: aws-actions/amazon-ecr-login@v2
         with:
+          registry-type: ecr
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ secrets.AWS_REGION }}
 
       - name: Build and Push Docker Image
-        id: build-image
         uses: docker/build-push-action@v3
         with:
           context: .
-          file: ./Dockerfile 
+          file: ./Dockerfile
           push: true
           tags: 637423471839.dkr.ecr.ap-south-1.amazonaws.com/hello-world-nodejs:latest
 
       - name: Deploy to ECS
-        id: deploy-ecs
         uses: aws-actions/amazon-ecs-deploy-task-definition@v1
         with:
-          task-definition: ./ecs-task-definition.json
+          task-definition: ecs-task-definition.json
           service: hello-world-app
           cluster: hello-world-cluster
-          region: ${{ secrets.AWS_REGION }}
           wait-for-service-stability: true
+        env:
+          AWS_REGION: ${{ secrets.AWS_REGION }}
