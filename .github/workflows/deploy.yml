@@ -13,7 +13,7 @@ jobs:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v2
         with:
-          node-version: '14'
+          node-version: '20'
       - run: npm install
       - run: docker build -t ${{ secrets.Myapp }}.dkr.ecr.ap-south-1.amazonaws.com/${{ secrets.Appname }}.dkr.ecr.ap-south-1.amazonaws.com/hello-world-nodejs:latest:$GITHUB_SHA .
       - id: ecr-login
