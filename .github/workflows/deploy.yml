@@ -28,7 +28,11 @@ jobs:
 
       - name: Login to AWS ECR
         uses: aws-actions/amazon-ecr-login@v2
-        
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
       - name: Build and Push Docker Image
         id: build-image
         uses: docker/build-push-action@v3
@@ -42,7 +46,7 @@ jobs:
         id: deploy-ecs
         uses: aws-actions/amazon-ecs-deploy-task-definition@v1
         with:
-          task-definition: ecs-task-definition.json
+          task-definition: ./ecs-task-definition.json
           service: hello-world-app
           cluster: hello-world-cluster
           region: ${{ secrets.AWS_REGION }}
