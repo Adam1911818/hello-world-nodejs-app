@@ -1,0 +1,7 @@
+aws_region      = "ap-south-1"
+app_name        = "hello-world-app"
+ecs_cluster_name = "hello-world-cluster"
+task_memory     = "512"
+task_cpu        = "256"
+desired_count   = "1"
+docker_image    = "637423471839.dkr.ecr.ap-south-1.amazonaws.com/hello-world-nodejs:latest"
