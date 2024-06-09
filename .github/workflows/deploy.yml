@@ -44,7 +44,7 @@ jobs:
         id: deploy-ecs
         uses: aws-actions/amazon-ecs-deploy-task-definition@v1
         with:
-          task-definition: path/to/your/ecs-task-definition.json
+          task-definition: ./ecs-task-definition.json
           service: hello-world-app
           cluster: hello-world-cluster
           region: ${{ secrets.AWS_REGION }}
