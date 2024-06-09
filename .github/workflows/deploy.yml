@@ -10,34 +10,21 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v2
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
         with:
           node-version: '14'
-
-      - name: Install dependencies
-        run: npm install
-
-      - name: Build Docker image
-        run: docker build -t ${{ secrets.Myapp }}.dkr.ecr.${{ secrets.ap-south-1 }}.amazonaws.com/${{ secrets.arn:aws:secretsmanager:ap-south-1:637423471839:secret:Myapp-MoOPIy }}:$GITHUB_SHA .
-
-      - name: Log in to Amazon ECR
-        id: ecr-login
+      - run: npm install
+      - run: docker build -t ${{ secrets.Myapp }}.dkr.ecr.ap-south-1.amazonaws.com/${{ secrets.Appname }}.dkr.ecr.ap-south-1.amazonaws.com/hello-world-nodejs:latest:$GITHUB_SHA .
+      - id: ecr-login
         uses: aws-actions/amazon-ecr-login@v1
-
-      - name: Push Docker image to ECR
-        run: |
-          docker tag ${{ secrets.637423471839 }}.dkr.ecr.${{ secrets.ap-south-1 }}.amazonaws.com/${{ secrets.637423471839.dkr.ecr.ap-south-1.amazonaws.com/hello-world-nodejs:latest }}:$GITHUB_SHA
-          docker push ${{ secrets.637423471839 }}.dkr.ecr.${{ secrets.ap-south-1 }}.amazonaws.com/${{ secrets.637423471839.dkr.ecr.ap-south-1.amazonaws.com/hello-world-nodejs:latest }}:$GITHUB_SHA
-
-      - name: Deploy to ECS
-        env:
+      - run: |
+          docker tag ${{ secrets.Myapp }}.dkr.ecr.ap-south-1.amazonaws.com/${{ secrets.Appname }}.dkr.ecr.ap-south-1.amazonaws.com/hello-world-nodejs:latest:$GITHUB_SHA
+          docker push ${{ secrets.Myapp }}.dkr.ecr.ap-south-1.amazonaws.com/${{ secrets.Appname }}.dkr.ecr.ap-south-1.amazonaws.com/hello-world-nodejs:latest:$GITHUB_SHA
+      - env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AKIAZI2LGJTPTW73QE53 }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.6X85RtbFS37lZTWD+1bJbvl2GoWb2VCEK3qS2++A}}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.6X85RtbFS37lZTWD+1bJbvl2GoWb2VCEK3qS2++A }}
         run: |
           cd terraform
           terraform init
-          terraform apply -auto-approve -var "docker_image=${{ secrets.637423471839 }}.dkr.ecr.${{ secrets.ap-south-1 }}.amazonaws.com/${{ secrets.637423471839.dkr.ecr.ap-south-1.amazonaws.com/hello-world-nodejs:latest }}:$GITHUB_SHA"
+          terraform apply -auto-approve -var "docker_image=${{ secrets.Myapp }}.dkr.ecr.ap-south-1.amazonaws.com/${{ secrets.Appname }}.dkr.ecr.ap-south-1.amazonaws.com/hello-world-nodejs:latest:$GITHUB_SHA"
