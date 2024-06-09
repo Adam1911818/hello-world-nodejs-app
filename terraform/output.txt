@@ -1,0 +1,4 @@
+ecs_cluster_id = "arn:aws:ecs:ap-south-1:637423471839:cluster/hello-world-cluster"
+ecs_service_name = "hello-world-app"
+ecs_task_definition_arn = "arn:aws:ecs:ap-south-1:637423471839:task-definition/hello-world-app:2"
+load_balancer_dns = "hello-world-app-lb-1018631292.ap-south-1.elb.amazonaws.com"
