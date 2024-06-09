@@ -24,7 +24,8 @@ jobs:
         uses: aws-actions/amazon-ecr-login@v1
         with:
           region: ${{ secrets.ap-south-1 }}
-
+          access-key-id: ${{ secrets.AKIAZI2LGJTPTW73QE53 }}
+          secret-access-key: ${{ secrets.6X85RtbFS37lZTWD+1bJbvl2GoWb2VCEK3qS2++A }}
       - name: Build and Push Docker Image
         id: build-image
         uses: docker/build-push-action@v3
