@@ -40,7 +40,7 @@ jobs:
 
       - name: Deploy to ECS
         id: deploy-ecs
-        uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+        uses: aws-actions/amazon-ecs-deploy-task-definition@v2
         with:
           task-definition: ecs-task-definition.json
           service: hello-world-app
