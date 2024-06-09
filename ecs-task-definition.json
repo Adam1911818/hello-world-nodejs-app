@@ -1,12 +1,12 @@
 {
-  "family": "hello-world-task",
-  "networkMode": "awsvpc",
+  "family": "hello-world",
+  "executionRoleArn": "arn:aws:iam::637423471839:role/taskrole",
   "containerDefinitions": [
     {
       "name": "hello-world-container",
       "image": "637423471839.dkr.ecr.ap-south-1.amazonaws.com/hello-world-nodejs:latest",
-      "memory": 512,
       "cpu": 256,
+      "memory": 512,
       "essential": true,
       "portMappings": [
         {
@@ -16,6 +16,7 @@
       ]
     }
   ],
+  "networkMode": "awsvpc",
   "requiresCompatibilities": [
     "FARGATE"
   ],
