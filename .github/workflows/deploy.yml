@@ -49,7 +49,7 @@ jobs:
                 cluster: 'hello-world-cluster',
                 service: 'hello-world-app',
                 serviceRegistries: [
-                  { registryArn: 'arn:aws:servicediscovery:REGION:ACCOUNT_ID:namespace/NAMESPACE_ID' }
+                  { registryArn: 'arn:aws:servicediscovery:ap-south-1:637423471839:namespace/ns-at32hk4uohpnxzg5' }
                 ]
               });
               const response = await ecsClient.send(updateServiceCommand);
