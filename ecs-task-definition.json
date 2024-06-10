@@ -1,25 +1,28 @@
-{
-  "family": "hello-world",
-  "executionRoleArn": "arn:aws:iam::637423471839:role/taskrole",
-  "containerDefinitions": [
-    {
-      "name": "hello-world-app",
-      "image": "637423471839.dkr.ecr.ap-south-1.amazonaws.com/hello-world-nodejs:latest",
-      "cpu": 256,
-      "memory": 512,
-      "essential": true,
-      "portMappings": [
-        {
-          "containerPort": 3000,
-          "hostPort": 3000
-        }
-      ]
-    }
-  ],
-  "networkMode": "awsvpc",
-  "requiresCompatibilities": [
-    "FARGATE"
-  ],
-  "cpu": "256",
-  "memory": "512"
-}
+const { ECSClient, RegisterTaskDefinitionCommand, UpdateServiceCommand } = require("@aws-sdk/client-ecs");
+const fs = require('fs');
+
+// Load the task definition from the JSON file
+const taskDefinition = JSON.parse(fs.readFileSync('ecstaskdefinition.json', 'utf8'));
+
+const ecsClient = new ECSClient();
+
+const registerTaskDefinition = async () => {
+  try {
+    const registerTaskCommand = new RegisterTaskDefinitionCommand(taskDefinition);
+    const response = await ecsClient.send(registerTaskCommand);
+    console.log("Task definition registered:", response.taskDefinition);
+
+    const updateServiceCommand = new UpdateServiceCommand({
+      cluster: "hello-world-cluster", 
+      service: "hello-world-app", 
+      taskDefinition: response.taskDefinition.taskDefinitionArn
+    });
+
+    const updateServiceResponse = await ecsClient.send(updateServiceCommand);
+    console.log("Service updated:", updateServiceResponse);
+  } catch (error) {
+    console.error("Error:", error);
+  }
+};
+
+registerTaskDefinition();
