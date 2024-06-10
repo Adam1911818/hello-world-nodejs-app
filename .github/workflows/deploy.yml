@@ -1,50 +1,61 @@
-name: Build and Deploy to ECS
+name: Deploy to ECS
 
 on:
   push:
     branches:
       - main
-  pull_request:
-    branches:
-      - main
 
 jobs:
-  build-and-deploy:
+  deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
+    - name: Checkout repository
+      uses: actions/checkout@v2
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ap-south-1
 
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v2
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ secrets.AWS_REGION }}
+    - name: Create ECS task definition
+      id: task-def
+      uses: aws-actions/amazon-ecs-render-task-definition@v1
+      with:
+        task-definition: ecstaskdefinition.json
+        container-name: hello-world-app
+        image: 637423471839.dkr.ecr.ap-south-1.amazonaws.com/hello-world-nodejs:latest
 
-      - name: Login to AWS ECR
-        uses: aws-actions/amazon-ecr-login@v2
-        with:
-          registry-type: private
+    - name: Deploy ECS task definition
+      id: deploy-task
+      uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+      with:
+        task-definition: ${{ steps.task-def.outputs.task-definition }}
+        service: hello-world-app
+        cluster: hello-world-cluster
+        wait-for-service-stability: true
 
-      - name: Build and Push Docker Image
-        uses: docker/build-push-action@v3
-        with:
-          context: .
-          file: ./Dockerfile
-          push: true
-          tags: 637423471839.dkr.ecr.ap-south-1.amazonaws.com/hello-world-nodejs:latest
-
-      - name: Deploy to ECS
-        uses: aws-actions/amazon-ecs-deploy-task-definition@v1
-        with:
-          task-definition: ecs-task-definition.json
-          service: hello-world-app
-          cluster: hello-world-cluster
-          wait-for-service-stability: true
-        env:
-          AWS_REGION: ${{ secrets.AWS_REGION }}
+    - name: Update ECS service with service registries
+      run: |
+        npm install @aws-sdk/client-ecs
+        node -e "
+          const { ECSClient, UpdateServiceCommand } = require('@aws-sdk/client-ecs');
+          const ecsClient = new ECSClient();
+          (async () => {
+            try {
+              const updateServiceCommand = new UpdateServiceCommand({
+                cluster: 'hello-world-cluster',
+                service: 'hello-world-app',
+                serviceRegistries: [
+                  { registryArn: 'arn:aws:servicediscovery:REGION:ACCOUNT_ID:namespace/NAMESPACE_ID' }
+                ]
+              });
+              const response = await ecsClient.send(updateServiceCommand);
+              console.log('Service updated:', response);
+            } catch (error) {
+              console.error('Error updating service:', error);
+            }
+          })();
+        "
