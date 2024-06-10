@@ -21,10 +21,5 @@
     "FARGATE"
   ],
   "cpu": "256",
-  "memory": "512",
-  "serviceRegistries": [
-    {
-      "registryArn": "arn:aws:servicediscovery:ap-south-1:637423471839:namespace/ns-at32hk4uohpnxzg5"
-    }
-  ]
+  "memory": "512"
 }
