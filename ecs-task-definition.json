@@ -14,7 +14,7 @@ const registerTaskDefinition = async () => {
 
     const updateServiceCommand = new UpdateServiceCommand({
       cluster: "hello-world-cluster", 
-      service: "hello-world-app", 
+      service: "hello-world-app",
       taskDefinition: response.taskDefinition.taskDefinitionArn
     });
 
