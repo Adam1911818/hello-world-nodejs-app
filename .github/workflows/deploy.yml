@@ -17,24 +17,23 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ap-south-1
 
-      # Assuming Docker image is already built and tagged as 'hello-world:latest'
       - name: Login to ECR
         uses: aws-actions/amazon-ecr-login@v2
         with:
           aws-region: ap-south-1
-          registry: <YOUR_ACCOUNT_ID>.dkr.ecr.ap-south-1.amazonaws.com  # Replace with your ECR URI
+          registry: 637423471839.dkr.ecr.ap-south-1.amazonaws.com/hello-world-nodejs
 
       - name: Push Docker image to ECR
         run: |
-          docker push <YOUR_ACCOUNT_ID>.dkr.ecr.ap-south-1.amazonaws.com/hello-world:latest
+          docker push <YOUR_ACCOUNT_ID>.dkr.ecr.ap-south-1.amazonaws.com/hello-world-nodejs:latest
 
       - name: Update ECS Service
         run: |
           aws ecs update-service \
-            --cluster <YOUR_ECS_CLUSTER_NAME> \
-            --service <YOUR_ECS_SERVICE_NAME> \
+            --cluster hello-world-cluster \
+            --service hello-world-app \
             --desired-count 1 \
-            --task-definition <YOUR_TASK_DEFINITION_ARN> \
+            --task-definition arn:aws:ecs:ap-south-1:637423471839:task-definition/hello-world:10 \
             --force-new-deployment
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
