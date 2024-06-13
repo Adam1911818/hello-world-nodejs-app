@@ -22,6 +22,9 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_DEFAULT_REGION: ${{ secrets.AWS_REGION }}
 
+      - name: Change to Terraform directory
+        run: cd /home/ec2-user/hello-world-nodejs/terraform
+
       - name: Verify directory structure
         run: |
           ls -la /home/ec2-user/hello-world-nodejs/terraform/main.tf
