@@ -22,8 +22,13 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_DEFAULT_REGION: ${{ secrets.AWS_REGION }}
 
+      - name: Verify directory structure
+        run: |
+          ls -la
+          ls -la /home/ec2-user/hello-world-nodejs/terraform
+
       - name: Deploy EC2 Instances with Terraform
         run: |
-          cd ec2/
+          cd /home/ec2-user/hello-world-nodejs/terraform
           terraform init
           terraform apply -auto-approve
