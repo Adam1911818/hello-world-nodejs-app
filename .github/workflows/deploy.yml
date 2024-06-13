@@ -23,15 +23,11 @@ jobs:
           aws-region: ap-south-1
           registry: 637423471839.dkr.ecr.ap-south-1.amazonaws.com  # Assuming this is your ECR registry
 
-      # Update ECS service with new image (replace placeholders)
-      - name: Update ECS Service
+      - name: Deploy EC2 Instances with Terraform
         run: |
-          aws ecs update-service \
-            --cluster hello-world-cluster \
-            --service hello-world-app \
-            --desired-count 1 \
-            --task-definition arn:aws:ecs:ap-south-1:637423471839:task-definition/hello-world-app:3 \
-            --force-new-deployment
+          terraform init
+          terraform apply -auto-approve
+
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
