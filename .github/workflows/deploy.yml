@@ -20,7 +20,7 @@ jobs:
 
       - name: Install dependencies
         run: npm install
-        working-directory: ./hello-world-nodejs
+        working-directory: ./app
 
       - name: Build Docker image
         run: docker build -t ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/${{ secrets.ECR_REPOSITORY }}
