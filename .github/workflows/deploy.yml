@@ -25,7 +25,6 @@ jobs:
       - name: Verify directory structure
         run: |
           ls -la
-          cd terraform
       - name: Deploy EC2 Instances with Terraform
         run: |
           terraform init
