@@ -23,10 +23,6 @@ jobs:
           aws-region: ap-south-1
           registry: 637423471839.dkr.ecr.ap-south-1.amazonaws.com/hello-world-nodejs
 
-      - name: Push Docker image to ECR
-        run: |
-          docker push <YOUR_ACCOUNT_ID>.dkr.ecr.ap-south-1.amazonaws.com/hello-world-nodejs:latest
-
       - name: Update ECS Service
         run: |
           aws ecs update-service \
