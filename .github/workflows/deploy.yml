@@ -13,9 +13,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Change to project directory
-        run: cd /home/runner/work/hello-world-nodejs
-
       - name: Set up Terraform
         uses: hashicorp/setup-terraform@v1
         with:
