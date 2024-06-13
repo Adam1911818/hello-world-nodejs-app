@@ -25,15 +25,7 @@ jobs:
       - name: Verify directory structure
         run: |
           ls -la
-          ls -la /home/ec2-user/hello-world-nodejs  # Check the contents of hello-world-nodejs directory
-          ls -la /home/ec2-user/hello-world-nodejs/terraform  # Check the contents of terraform directory if exists
-
-      - name: Create terraform directory if missing
-        run: mkdir -p /home/ec2-user/hello-world-nodejs/terraform
-
-      - name: Change to Terraform directory
-        run: cd /home/ec2-user/hello-world-nodejs/terraform  # Adjust the path based on your findings
-
+          ls - /terraform
       - name: Deploy EC2 Instances with Terraform
         run: |
           terraform init
