@@ -1,4 +1,4 @@
-name: Deploy to ECS
+name: Deploy EC2 Instances
 
 on:
   push:
@@ -22,8 +22,8 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_DEFAULT_REGION: ${{ secrets.AWS_REGION }}
 
-      - name: Deploy with Terraform
+      - name: Deploy EC2 Instances with Terraform
         run: |
-          cd terraform/
+          cd ec2/
           terraform init
           terraform apply -auto-approve
