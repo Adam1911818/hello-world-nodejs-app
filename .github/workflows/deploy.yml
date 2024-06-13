@@ -24,8 +24,7 @@ jobs:
 
       - name: Verify directory structure
         run: |
-          ls -la
-          ls -la /home/ec2-user/hello-world-nodejs/terraform
+          ls -la /home/ec2-user/hello-world-nodejs/terraform/*.tf
 
       - name: Deploy EC2 Instances with Terraform
         run: |
