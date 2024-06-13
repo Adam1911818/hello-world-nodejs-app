@@ -2,25 +2,41 @@ name: Deploy to ECS
 
 on:
   push:
-    branches:
-      - main
+    branches: [ main ]
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
-
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
-    - name: Configure AWS credentials
-      uses: aws-actions/configure-aws-credentials@v1
-      with:
-        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws-region: ap-south-1
-        
-     - name: Deploy EC2 Instances with Terraform
+      - name: Configure AWS credentials (securely store secrets)
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ap-south-1
+
+      # Assuming Docker image is already built and tagged as 'hello-world:latest'
+      - name: Login to ECR
+        uses: aws-actions/amazon-ecr-login@v2
+        with:
+          aws-region: ap-south-1
+          registry: <YOUR_ACCOUNT_ID>.dkr.ecr.ap-south-1.amazonaws.com  # Replace with your ECR URI
+
+      - name: Push Docker image to ECR
         run: |
-          terraform init
-          terraform apply -auto-approve
+          docker push <YOUR_ACCOUNT_ID>.dkr.ecr.ap-south-1.amazonaws.com/hello-world:latest
+
+      - name: Update ECS Service
+        run: |
+          aws ecs update-service \
+            --cluster <YOUR_ECS_CLUSTER_NAME> \
+            --service <YOUR_ECS_SERVICE_NAME> \
+            --desired-count 1 \
+            --task-definition <YOUR_TASK_DEFINITION_ARN> \
+            --force-new-deployment
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
