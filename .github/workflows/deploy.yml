@@ -24,6 +24,5 @@ jobs:
 
       - name: Deploy EC2 Instances with Terraform
         run: |
-          cd /home/ec2-user/hello-world-nodejs/terraform
           terraform init
           terraform apply -auto-approve
