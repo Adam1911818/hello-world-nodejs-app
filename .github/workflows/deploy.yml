@@ -23,7 +23,7 @@ jobs:
         working-directory: ./app
 
       - name: Build Docker image
-        run: docker build -t ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/${{ secrets.ECR_REPOSITORY }}:$GITHUB_SHA .
+        run: docker build -t ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/${{ secrets.637423471839.dkr.ecr.ap-south-1.amazonaws.com/hello-world-nodejs }}:$GITHUB_SHA .
         working-directory: .
 
       - name: Log in to Amazon ECR
