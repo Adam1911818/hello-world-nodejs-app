@@ -6,56 +6,40 @@ on:
       - main
 
 jobs:
-  deploy:
+  build:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v2
+      - name: Checkout code
+        uses: actions/checkout@v2
 
-    - name: Configure AWS credentials
-      uses: aws-actions/configure-aws-credentials@v1
-      with:
-        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws-region: ap-south-1
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '14'
 
-    - name: Create ECS task definition
-      id: task-def
-      uses: aws-actions/amazon-ecs-render-task-definition@v1
-      with:
-        task-definition: ecs-task-definition.json
-        container-name: hello-world-app
-        image: 637423471839.dkr.ecr.ap-south-1.amazonaws.com/hello-world-nodejs:latest
+      - name: Install dependencies
+        run: npm install
+        working-directory: ./app
 
-    - name: Deploy ECS task definition
-      id: deploy-task
-      uses: aws-actions/amazon-ecs-deploy-task-definition@v1
-      with:
-        task-definition: ${{ steps.task-def.outputs.task-definition }}
-        service: hello-world-app
-        cluster: hello-world-cluster
-        wait-for-service-stability: true
+      - name: Build Docker image
+        run: docker build -t ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/${{ secrets.ECR_REPOSITORY }}:$GITHUB_SHA .
+        working-directory: .
 
-    - name: Update ECS service with service registries
-      run: |
-        npm install @aws-sdk/client-ecs
-        node -e "
-          const { ECSClient, UpdateServiceCommand } = require('@aws-sdk/client-ecs');
-          const ecsClient = new ECSClient();
-          (async () => {
-            try {
-              const updateServiceCommand = new UpdateServiceCommand({
-                cluster: 'hello-world-cluster',
-                service: 'hello-world-app',
-                serviceRegistries: [
-                  { registryArn: 'arn:aws:servicediscovery:ap-south-1:637423471839:namespace/ns-at32hk4uohpnxzg5' }
-                ]
-              });
-              const response = await ecsClient.send(updateServiceCommand);
-              console.log('Service updated:', response);
-            } catch (error) {
-              console.error('Error updating service:', error);
-            }
-          })();
-        "
+      - name: Log in to Amazon ECR
+        id: ecr-login
+        uses: aws-actions/amazon-ecr-login@v1
+
+      - name: Push Docker image to ECR
+        run: |
+          docker tag ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/${{ secrets.ECR_REPOSITORY }}:$GITHUB_SHA
+          docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/${{ secrets.ECR_REPOSITORY }}:$GITHUB_SHA
+
+      - name: Deploy to ECS
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        run: |
+          cd terraform
+          terraform init
+          terraform apply -auto-approve -var "docker_image=${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/${{ secrets.ECR_REPOSITORY }}:$GITHUB_SHA"
