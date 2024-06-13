@@ -21,7 +21,7 @@ jobs:
         uses: aws-actions/amazon-ecr-login@v2
         with:
           aws-region: ap-south-1
-          registry: 637423471839.dkr.ecr.ap-south-1.amazonaws.com  # Assuming this is your ECR registry
+          registry: 637423471839.dkr.ecr.ap-south-1.amazonaws.com/hello-world-nodejs
 
      # Update ECS service with new image (replace placeholders)
       - name: Update ECS Service
@@ -30,7 +30,7 @@ jobs:
             --cluster hello-world-cluster \
             --service hello-world-app \
             --desired-count 1 \
-            --task-definition arn:aws:ecs:ap-south-1:637423471839:task-definition/hello-world-app:4 \
+            --task-definition arn:aws:ecs:ap-south-1:637423471839:task-definition/hello-world-app \
             --force-new-deployment
 
         env:
