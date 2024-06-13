@@ -22,7 +22,8 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_DEFAULT_REGION: ${{ secrets.AWS_REGION }}
 
-      - name: Deploy to ECS
+      - name: Deploy with Terraform
         run: |
+          cd terraform/
           terraform init
           terraform apply -auto-approve
