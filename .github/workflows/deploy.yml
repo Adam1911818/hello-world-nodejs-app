@@ -20,11 +20,11 @@ jobs:
 
       - name: Install dependencies
         run: npm install
-        working-directory: ./app
+        working-directory: ./hello-world-nodejs
 
       - name: Build Docker image
         run: docker build -t ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/${{ secrets.ECR_REPOSITORY }}
-        working-directory: .
+        working-directory: ./hello-world-nodejs
 
       - name: Log in to Amazon ECR
         id: ecr-login
