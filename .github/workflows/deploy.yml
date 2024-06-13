@@ -30,7 +30,7 @@ jobs:
             --cluster hello-world-cluster \
             --service hello-world-app \
             --desired-count 1 \
-            --task-definition arn:aws:ecs:ap-south-1:637423471839:task-definition/hello-world-app:3 \
+            --task-definition arn:aws:ecs:ap-south-1:637423471839:task-definition/hello-world-app:4 \
             --force-new-deployment
 
         env:
